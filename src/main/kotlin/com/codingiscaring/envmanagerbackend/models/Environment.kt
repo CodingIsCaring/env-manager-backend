@@ -1,4 +1,4 @@
-package com.codingiscaring.envmanagerbackend.entities
+package com.codingiscaring.envmanagerbackend.models
 
 import com.codingiscaring.envmanagerbackend.controllers.requests.EnvironmentRequest
 
