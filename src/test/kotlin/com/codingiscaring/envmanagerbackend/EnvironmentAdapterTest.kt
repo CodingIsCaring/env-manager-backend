@@ -1,10 +1,9 @@
 package com.codingiscaring.envmanagerbackend
 
 import com.codingiscaring.envmanagerbackend.models.Environment
-import com.codingiscaring.envmanagerbackend.services.BaseRepository
-import com.codingiscaring.envmanagerbackend.services.EnvironmentService
+import com.codingiscaring.envmanagerbackend.repositories.EnvironmentAdapter
+import com.codingiscaring.envmanagerbackend.repositories.EnvironmentRepository
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,17 +12,16 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import org.testcontainers.shaded.com.github.dockerjava.core.dockerfile.DockerfileStatement.Env
 import org.testcontainers.utility.DockerImageName
 
 @Testcontainers
 @DataMongoTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class EnvironmentServiceTest {
+class EnvironmentAdapterTest {
     @Autowired
-    lateinit var repository: BaseRepository
+    lateinit var repository: EnvironmentRepository
 
-    lateinit var environmentService: EnvironmentService
+    private lateinit var environmentAdapter: EnvironmentAdapter
 
     companion object {
         @ServiceConnection
@@ -38,14 +36,14 @@ class EnvironmentServiceTest {
 
     @BeforeAll
     fun setup() {
-        environmentService = EnvironmentService(repository)
+        environmentAdapter = EnvironmentAdapter(repository)
     }
 
     @Test
     fun shouldStoreAnEnvironment() {
         val environment = Environment("local", "local environment")
-        environmentService.create(environment)
+        environmentAdapter.create(environment)
 
-        assert(repository.count() == 1L, { "It should have one environment saved" })
+        assert(repository.count() == 1L) { "It should have one environment saved" }
     }
 }
