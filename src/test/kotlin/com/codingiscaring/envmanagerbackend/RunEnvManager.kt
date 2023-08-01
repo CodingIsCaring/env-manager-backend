@@ -11,8 +11,8 @@ import org.testcontainers.utility.DockerImageName
 
 fun main(args: Array<String>) {
     fromApplication<EnvManagerBackendApplication>()
-            .with(Configuration::class)
-            .run(*args)
+        .with(Configuration::class)
+        .run(*args)
 }
 
 @TestConfiguration(proxyBeanMethods = false)
@@ -22,7 +22,12 @@ class Configuration {
     @RestartScope
     @ServiceConnection
     fun mongoContainer(): MongoDBContainer {
-        return MongoDBContainer(DockerImageName.parse("mongo:latest"))
-                .withReuse(true)
+        val container = MongoDBContainer(DockerImageName.parse("mongo:latest"))
+            .withLabel(
+                "com.testcontainers.desktop.service",
+                "envmanager"
+            )
+        container.portBindings = listOf("27017:27017")
+        return container
     }
 }
