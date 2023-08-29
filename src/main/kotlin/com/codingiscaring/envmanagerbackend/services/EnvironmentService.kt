@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class EnvironmentService (@Autowired val environmentAdapter: EnvironmentAdapter) {
-    fun create(environment: Environment) {
-        environmentAdapter.create(environment)
+    fun create(environment: Environment): Result<String> {
+        return environmentAdapter.create(environment)
     }
 }

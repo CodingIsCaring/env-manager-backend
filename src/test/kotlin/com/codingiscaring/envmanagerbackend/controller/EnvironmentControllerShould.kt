@@ -1,5 +1,9 @@
 package com.codingiscaring.envmanagerbackend.controller
 
+import com.codingiscaring.envmanagerbackend.models.Environment
+import com.codingiscaring.envmanagerbackend.repositories.EnvironmentRepository
+import com.codingiscaring.envmanagerbackend.repositories.entities.EnvironmentEntity
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,6 +26,9 @@ class EnvironmentControllerShould {
     @Autowired
     lateinit var mockMvc: MockMvc
 
+    @Autowired
+    private lateinit var repository: EnvironmentRepository;
+
     companion object {
         @ServiceConnection
         @Container
@@ -33,14 +40,31 @@ class EnvironmentControllerShould {
         }
     }
 
+    @BeforeEach
+    fun setup() {
+        repository.deleteAll()
+    }
+
     @Test
     fun `create an environment`() {
         mockMvc.perform(
             post("/environments")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name": "local", "description": "local environment"}""")
-        )
+                .content("""{"name": "local", "description": "local environment"}"""))
             .andExpect(status().isCreated)
+    }
+
+    @Test
+    fun `not create an environment when it already exists`() {
+        val environment = Environment("local", "local environment")
+        val environmentEntity = EnvironmentEntity.mapFrom(environment)
+        repository.insert(environmentEntity)
+
+        mockMvc.perform(
+            post("/environments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"name": "local", "description": "local environment"}"""))
+            .andExpect(status().isConflict)
     }
 
 }

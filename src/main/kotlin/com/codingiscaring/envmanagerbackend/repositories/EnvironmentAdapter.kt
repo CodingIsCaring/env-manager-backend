@@ -7,9 +7,15 @@ import org.springframework.stereotype.Component
 
 // ToDo: Rename this class to EnvironmentRepository
 @Component
-class EnvironmentAdapter (@Autowired val environmentRepository: EnvironmentRepository) {
-    fun create(environment: Environment) {
+class EnvironmentAdapter(@Autowired val environmentRepository: EnvironmentRepository) {
+    fun create(environment: Environment): Result<String> {
         var entity = EnvironmentEntity.mapFrom(environment)
-        environmentRepository.insert(entity)
+        try {
+            environmentRepository.insert(entity)
+            return Result.success("")
+        } catch (exception: Exception) {
+            println(exception.message)
+            return Result.failure(exception)
+        }
     }
 }
