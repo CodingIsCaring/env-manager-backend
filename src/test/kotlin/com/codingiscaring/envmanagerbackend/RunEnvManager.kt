@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection
 import org.springframework.boot.with
 import org.springframework.context.annotation.Bean
+import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.utility.DockerImageName
 
@@ -27,6 +28,8 @@ class Configuration {
                 "com.testcontainers.desktop.service",
                 "envmanager"
             )
+            .withSharding() // Fixes boot issue when using default configuration (replica-set) with volume mounting
+            .withFileSystemBind("./.data", "/data/db")
         container.portBindings = listOf("27017:27017")
         return container
     }
