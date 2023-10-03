@@ -30,7 +30,7 @@ class Configuration {
         override fun configure() {
             waitingFor(Wait.forLogMessage("(?i).*waiting for connections.*", 1));
             withFileSystemBind("./.data", "/data/db", BindMode.READ_WRITE)
-            portBindings = listOf("27019:27017")
+            portBindings = listOf("27017:27017")
         }
 
         override fun containerIsStarted(containerInfo: InspectContainerResponse?, reused: Boolean) {
