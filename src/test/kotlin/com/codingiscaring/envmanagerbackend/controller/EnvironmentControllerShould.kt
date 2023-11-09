@@ -27,7 +27,7 @@ class EnvironmentControllerShould {
     lateinit var mockMvc: MockMvc
 
     @Autowired
-    private lateinit var repository: EnvironmentRepository;
+    private lateinit var repository: EnvironmentRepository
 
     companion object {
         @ServiceConnection
@@ -50,7 +50,8 @@ class EnvironmentControllerShould {
         mockMvc.perform(
             post("/environments")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name": "local", "description": "local environment"}"""))
+                .content("""{"name": "local", "description": "local environment"}""")
+        )
             .andExpect(status().isCreated)
     }
 
@@ -63,8 +64,68 @@ class EnvironmentControllerShould {
         mockMvc.perform(
             post("/environments")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name": "local", "description": "local environment"}"""))
+                .content("""{"name": "local", "description": "local environment"}""")
+        )
             .andExpect(status().isConflict)
     }
 
+    @Test
+    fun `not create an environment when name is empty`() {
+        mockMvc.perform(
+            post("/environments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"name": "", "description": "local environment"}""")
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `not create an environment when name is a blank space`() {
+        mockMvc.perform(
+            post("/environments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"name": " ", "description": "local environment"}""")
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `not create an environment when name is null`() {
+        mockMvc.perform(
+            post("/environments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"name": null, "description": "local environment"}""")
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `create an environment when description is null`() {
+        mockMvc.perform(
+            post("/environments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"name": "local", "description": null}""")
+        )
+            .andExpect(status().isCreated)
+    }
+
+    @Test
+    fun `not create an environment when description is empty`() {
+        mockMvc.perform(
+            post("/environments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"name": "local", "description": ""}""")
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `not create an environment when description is a blank space`() {
+        mockMvc.perform(
+            post("/environments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"name": "local", "description": " "}""")
+        )
+            .andExpect(status().isBadRequest)
+    }
 }
